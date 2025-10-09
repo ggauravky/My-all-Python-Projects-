@@ -1,116 +1,179 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title> GSMS </title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
-    <meta name="csrf-token" content="kmapods5wQ5L1hn7rcR9OPst7EsN0gC7SrHh3m9K"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,300,600,700">
-    <link media="all" type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
-    <link media="all" type="text/css" rel="stylesheet" href="css/style.css?v=1.0">
-    <link media="all" type="text/css" rel="stylesheet" href="css/custom.css?v=1.3.3">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Order - Grocery Store</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/sidebar-menu.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="tooltips">
-<div class="container">
+<body>
+    <!-- Dark Mode Toggle Button -->
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+        <i class="fas fa-moon"></i>
+    </button>
 
-    <div class="header content rows-content-header">
-        <button class="button-menu-mobile show-sidebar">
-            <i class="fa fa-bars"></i>
-        </button>
-        <div class="navbar navbar-default" role="navigation">
-            <div class="container">
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-shopping-basket"></i>
+            <h3>Grocery Store</h3>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li>
+                <a href="index.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="manage-product.html">
+                    <i class="fas fa-box"></i>
+                    <span>Manage Products</span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="order.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Place Order</span>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <p>&copy; 2025 Grocery Store</p>
+        </div>
+    </div>
 
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav visible-lg visible-md limit-chars">
-                        <ul class="breadcrumb">
-                            <a href="index.html">
-                                <i class="zmdi zmdi-view-dashboard zmdi-hc-fw" data-toggle="tooltip" data-placement="bottom" title="Dashboard"></i>
-                            </a>
-                            <a href="manage-product.html">
-                                <i class="zmdi zmdi-assignment zmdi-hc-fw" data-toggle="tooltip" data-placement="bottom" title="Products"></i>
-                            </a>
-                        </ul>
-                    </ul>
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Top Header -->
+        <div class="top-header">
+            <h1><i class="fas fa-shopping-cart"></i> Place New Order</h1>
+            <div class="header-info">
+                <span id="currentDateTime"></span>
+            </div>
+        </div>
+
+        <!-- Order Container -->
+        <div class="dashboard-container">
+            <!-- Customer Information -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-user"></i> Customer Information</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="customerName">
+                        <i class="fas fa-user-circle"></i> Customer Name *
+                    </label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="customerName" 
+                           placeholder="Enter customer name"
+                           required>
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-list"></i> Order Items</h2>
+                    <button class="btn btn-primary" onclick="addOrderRow()">
+                        <i class="fas fa-plus"></i> Add Item
+                    </button>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table order-table" id="orderItemsTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 40%">Product</th>
+                                <th style="width: 20%">Quantity</th>
+                                <th style="width: 20%">Price</th>
+                                <th style="width: 20%">Total</th>
+                                <th style="width: 10%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTableBody">
+                            <!-- Order rows will be added dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="section-card">
+                <div class="order-summary">
+                    <div class="summary-row">
+                        <span class="summary-label">
+                            <i class="fas fa-shopping-bag"></i> Total Items:
+                        </span>
+                        <span class="summary-value" id="totalItems">0</span>
+                    </div>
+                    <div class="summary-row grand-total">
+                        <span class="summary-label">
+                            <i class="fas fa-rupee-sign"></i> Grand Total:
+                        </span>
+                        <span class="summary-value" id="grandTotal">₹0.00</span>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button class="btn btn-success btn-lg" onclick="submitOrder()">
+                        <i class="fas fa-check-circle"></i> Place Order
+                    </button>
+                    <button class="btn btn-secondary btn-lg" onclick="clearOrder()">
+                        <i class="fas fa-times-circle"></i> Clear Order
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="right content-page">
-        <div class="body content rows scroll-y">
-            <form action="">
-                <div class="box-info full" id="taskFormContainer">
-                    <h2>New Order
-                        <input name="customerName" id="customerName" type="text" class="form-control" placeholder="Customer Name" style="max-width:230px; float: right;margin-top: -11px">
-                    </h2>
-                    <div class="row" style="margin-bottom: 5px;margin-top: -10px;">
-                        <div class="col-sm-12">
-                            <div class="col-sm-4">
-                                <label >Product</label>
-                            </div>
-                            <div class="col-sm-3">
-                                <label >Price</label>
-                            </div>
-                            <div class="col-sm-2">
-                                <label >Quantity</label>
-                            </div>
-                            <div class="col-sm-3">
-                                <label >Total</label>
-                                <button class="btn btn-sm btn-primary pull-right" style="margin-top: -5px" type="button" id="addMoreButton">Add More</button>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-check-circle"></i> Order Placed Successfully!
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
                 </div>
-
-                <div class="product-box-extra" id="itemsInOrder">
-
+                <div class="modal-body text-center">
+                    <i class="fas fa-check-circle text-success" style="font-size: 64px;"></i>
+                    <h4 class="mt-3">Order ID: <span id="orderIdDisplay"></span></h4>
+                    <p>Customer: <span id="customerNameDisplay"></span></p>
+                    <p>Total Amount: <span id="totalAmountDisplay"></span></p>
                 </div>
-
-                <div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="box-info full p-3 mb-3 mt-0">
-                                <div class="col-sm-9 text-right">
-                                    <span><b>Total</b></span>
-                                </div>
-                                <div class="col-sm-3">
-                                    <b><input id="product_grand_total" name="product_grand_total" class="product-grand-total" value="0.0"></input> Rs</b>
-                                    <button class="btn btn-sm btn-primary pull-right" type="button" id="saveOrder">Save</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-            <div class="product-box hidden">
-                <div class="row product-item">
-                    <div class="col-sm-12">
-                        <div class="box-info full p-3 mb-3 mt-0">
-                            <div class="col-sm-4">
-                                <select name="product" class="form-control cart-product" style="max-width: 250px"></select>
-                            </div>
-                            <div class="col-sm-3">
-                                <input id="product_price" name="product_price" class="product-price" value="0.0"></input>
-                            </div>
-                            <div class="col-sm-2">
-                                <input name="qty" type="number" min="1" placeholder="" class="form-control product-qty" value="1" style="max-width: 100px">
-                            </div>
-                            <div class="col-sm-3">
-                                <input id="item_total" name="item_total" class="product-total"></input><span> Rs</span>
-                                <button class="btn btn-sm btn-danger pull-right remove-row" type="button">Remove</button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="printOrder()">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="newOrder()">
+                        <i class="fas fa-plus"></i> New Order
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- JavaScript Files -->
+    <script src="js/packages/jquery.min.js"></script>
+    <script src="js/packages/bootstrap.min.js"></script>
+    <script src="js/custom/common.js"></script>
+    <script src="js/custom/order.js"></script>
 </body>
-<script src="js/packages/jquery.min.js"></script>
-<script src="js/custom/common.js"></script>
-<script src="js/custom/order.js"></script>
 </html>
